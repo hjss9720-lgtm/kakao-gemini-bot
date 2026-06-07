@@ -10,24 +10,30 @@ const userSession = new Map();
 const G_KEY = process.env.GEMINI_API_KEY;
 const MODEL = "gemini-2.5-flash-lite";
 
+// 1. 브라우저 접속 확인용 (GET /)
+app.get("/", (req, res) => {
+  res.send("Vercel Gemini Bot is Active! 🚀");
+});
+
+// 2. 카카오톡 챗봇 연동용 웹훅 (POST /webhook)
 app.post("/webhook", async (req, res) => {
   const userId = req.body.userRequest?.user?.id || "unknown";
   const userMsg = req.body.userRequest?.utterance || "";
   
-  // 1. 주머니 확인
+  // 주머니 확인
   const session = userSession.get(userId);
 
-  // 2. 만약 답변이 완성된 상태라면? 사용자가 뭐라고 묻든(예: "답 줘", "ㅎㅇ") 바로 답변 투척!
+  // 답변이 완성된 상태라면 즉시 반환
   if (session && session.status === "COMPLETED") {
     const finalReply = session.reply;
-    userSession.delete(userId); // 답 줬으니까 주머니 비우기
+    userSession.delete(userId); 
     return res.json({
       version: "2.0",
       template: { outputs: [{ simpleText: { text: finalReply } }] }
     });
   }
 
-  // 3. 만약 아직 만드는 중(PENDING)이라면?
+  // 만드는 중(PENDING)이라면 안내 멘트
   if (session && session.status === "PENDING") {
     return res.json({
       version: "2.0",
@@ -35,13 +41,11 @@ app.post("/webhook", async (req, res) => {
     });
   }
 
-  // 4. 완전히 새로운 질문인 경우
+  // 새로운 질문 접수
   userSession.set(userId, { status: "PENDING", lastMsg: userMsg });
-  
-  // 백그라운드에서 제미나이 가동
   runGemini(userId, userMsg);
 
-  // 첫 질문 시 딱 4초만 기다려봄
+  // 첫 질문 시 4초 대기
   const result = await Promise.race([
     waitForReply(userId),
     new Promise(resolve => setTimeout(() => resolve("TIMEOUT"), 4000))
@@ -83,8 +87,7 @@ async function runGemini(uid, msg) {
     
     if (reply) {
       userSession.set(uid, { status: "COMPLETED", reply: reply });
-      // 5분 뒤 자동 삭제 (안 물어보고 나가는 경우 대비)
-      setTimeout(() => userSession.delete(uid), 300000);
+      setTimeout(() => userSession.delete(uid), 300000); // 5분 후 폭파
     } else {
       userSession.delete(uid);
     }
