@@ -7,7 +7,7 @@ app.use(express.json());
 const userSession = new Map();
 
 const G_KEY = process.env.GEMINI_API_KEY;
-const MODEL = "gemini-2.0-flash"; // 2.5-flash-lite보다 빠름
+const MODEL = "gemini-2.5-flash-lite"; // 2.5-flash-lite보다 빠름
 
 const SYSTEM_PROMPT = `당신은 친절한 한중에스에스 고객 상담 챗봇입니다.
 답변 규칙:
