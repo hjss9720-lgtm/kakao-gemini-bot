@@ -96,6 +96,7 @@ ${contextText || "관련 자료 없음"}`;
   });
 
   const data = await response.json();
+  console.log("Gemini 응답:", JSON.stringify(data));
   return data.candidates?.[0]?.content?.parts?.[0]?.text?.trim() || "답변을 가져오지 못했어요.";
 }
 
