@@ -7,7 +7,7 @@ const G_KEY = process.env.GEMINI_API_KEY;
 const SUPABASE_URL = process.env.SUPABASE_URL;
 const SUPABASE_KEY = process.env.SUPABASE_KEY;
 
-const MODEL = "gemini-2.0-flash";
+const MODEL = "gemini-2.0-flash-lite";
 const EMBED_MODEL = "models/gemini-embedding-001";
 
 app.get("/", (req, res) => {
