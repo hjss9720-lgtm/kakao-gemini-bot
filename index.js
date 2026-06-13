@@ -44,7 +44,7 @@ app.post("/webhook", async (req, res) => {
   // 최대 4.5초 대기
   const result = await Promise.race([
     waitForReply(userId),
-    new Promise(resolve => setTimeout(() => resolve("TIMEOUT"), 4500))
+    new Promise(resolve => setTimeout(() => resolve("TIMEOUT"), 4800))
   ]);
 
   if (result !== "TIMEOUT" && result !== "ERROR") {
