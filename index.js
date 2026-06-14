@@ -37,6 +37,7 @@ async function getEmbedding(text) {
     })
   });
   const data = await res.json();
+  console.log("임베딩 결과:", data.embedding ? "성공" : JSON.stringify(data));
   return data.embedding?.values || null;
 }
 
@@ -55,6 +56,7 @@ async function searchFAQ(embedding) {
     })
   });
   const data = await res.json();
+  console.log("Supabase 응답:", JSON.stringify(data));
   return Array.isArray(data) ? data : [];
 }
 
@@ -71,6 +73,8 @@ async function runRAGGemini(msg) {
         .join("\n\n");
     }
   }
+
+  console.log("컨텍스트 사용 여부:", contextText ? "있음" : "없음");
 
   const systemPrompt = `당신은 한중에스에스 고객 상담 챗봇입니다.
 답변 규칙:
